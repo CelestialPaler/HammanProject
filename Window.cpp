@@ -1,44 +1,29 @@
 ﻿/***************************************************************************************************/
-/*                                                        Hamman re-edition                                                          */
-/*                                                           Windoiw Class	                                                               */
-/*                                                            天师苍邪科技                                                                */
-/*                                      Copyright © 2015-2018 Celestial Tech Inc.                                          */
+/*                                                      Hamman re-edition                                                            */
+/*                                                              Windows                                                                    */
+/*                                                           天师苍邪科技                                                                 */
+/*                                                   www.tianshicangxie.com                                                        */
+/*                                      Copyright © 2015-2018 Celestial Tech Inc.                                           */
 /***************************************************************************************************/
+// Header files
 #include "Window.h"
-/***************************************************************************************************/
-// Class : Window
-/// Main rendering logic 
-/// Store all the entities and other stuff , i.e. sound effect, text, etc.
 
-// Constructor
-Window::Window()
+// Initializing the window and start the main loop
+void ct::Window::Run(void)
 {
 	// Create a new window 
 	sf::RenderWindow window(sf::VideoMode(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT), title);
-	// Set framerate limit
-	window.setFramerateLimit(60);
-	// Get the handle of the window and set it top-most
-	HWND hwnd = window.getSystemHandle();
-	SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, 
-		WS_EX_TOOLWINDOW | SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 
-	// Set window to transparent
-	if (!Debug_Mode)
-	{
-		MARGINS margins;
-		margins.cxLeftWidth = -1;
-		SetWindowLong(hwnd, GWL_STYLE, WS_POPUP | WS_VISIBLE);
-		DwmExtendFrameIntoClientArea(hwnd, &margins);
-	}
+	// Initializing the new window
+	if (WindowInit(window))
+		cerr << "ERROR : Can`t initializing the window!" << endl;
+	// Initializing all the entities and other stuff
+	if (EntityInit())
+		cerr << "ERROR : Can`t initializing entities!" << endl;
 
-	// Initializing all the entities
-	EntityInit();
-
-	// Main loop of the windows 
+	// Main loop 
 	while (window.isOpen())
 	{
-		// Handle all the events
-		HandleEvent(window);
 		// Update all the entities
 		Update();
 		// Clear the window
@@ -49,46 +34,73 @@ Window::Window()
 	}
 }
 
-// Initializing all the entities and other stuff
-FuncStat Window::EntityInit(void)
+// Hook of the events
+void ct::Window::EventHook(void)
 {
-	// Character Loading
-	/// Hamman G
-	static Character hammanG(HAMMAN_G_FULL, sf::Vector2f(0.5, 0.5));
-	hammanG.SetPostion(sf::Vector2f(MAIN_WINDOW_WIDTH / 2, MAIN_WINDOW_HEIGHT / 2));
-	characterList.insert(pair<string, Character *>("HammanG", &hammanG));
-	/// Hamman D
-	static Character hammanD(HAMMAN_D_FULL, sf::Vector2f(0.5, 0.5));
-	hammanD.SetPostion(sf::Vector2f(MAIN_WINDOW_WIDTH / 2, MAIN_WINDOW_HEIGHT / 2));
-	characterList.insert(pair<string, Character *>("HammanD", &hammanD));
+	// Used for grabbing and repostioning a transparent window
+	static sf::Vector2i grabOffset;
+	static bool grabFlag = false;
+	sf::Event event;
 
-	// Entity Loading
-	/// DialogueWindow
-	static Entity dialogueWindow(DIALOGUE_BOX_FULL, sf::Vector2f(0.33, 0.25));
-	dialogueWindow.SetPostion(sf::Vector2f(MAIN_WINDOW_WIDTH / 2, MAIN_WINDOW_HEIGHT / 2 + 100));
-	dialogueWindow.GetSprite().setColor(sf::Color(255, 255, 255, 255 * 0.8));
-	entityList.insert(pair<string, Entity *>("Dialogue", &dialogueWindow));
+	// Grabbing and repostioning a transparent window
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::LAlt))
+	{
+		if (event.type == sf::Event::MouseButtonPressed)
+		{
+			if (event.mouseButton.button == sf::Mouse::Left)
+			{
+				grabOffset = _window.getPosition() - sf::Mouse::getPosition();
+				grabFlag = true;
+			}
+		}
+		else if (event.type == sf::Event::MouseButtonReleased)
+		{
+			if (event.mouseButton.button == sf::Mouse::Left)
+				grabFlag = false;
+		}
+		else if (event.type == sf::Event::MouseMoved)
+		{
+			if (grabFlag)
+				_window.setPosition(sf::Mouse::getPosition() + grabOffset);
+		}
+	}
+}
 
-	// Button Loading
-	/// Visual Studio
-	static Button visualStudioLink(ICON_VISUAL_STUDIO, sf::Vector2f(0.2, 0.2));
-	visualStudioLink.SetPostion(sf::Vector2f(MAIN_WINDOW_WIDTH / 6, MAIN_WINDOW_HEIGHT / 6));
-	buttonList.insert(pair<string, Button *>("VisualStudioLink", &visualStudioLink));
+// Initializing the renderwindow
+FuncStat ct::Window::WindowInit(sf::RenderWindow & _window)
+{
+	// Set framerate limit
+	_window.setFramerateLimit(60);
 
-	// Text Loading
-	/// Dialogue No.1
-	static Text dialogueText(FONT_CH_FANG, "Hentai!", 30);
-	dialogueText.GetText().setString(L"            变态!\n为什么一直盯着哈曼看!");
-	dialogueText.SetColor(sf::Color(50, 50, 50));
-	dialogueText.SetPosition(sf::Vector2f(MAIN_WINDOW_WIDTH / 2 - 100, MAIN_WINDOW_HEIGHT / 2 + 70));
-	textList.insert(pair<string, Text *>("MainDialogue", &dialogueText));
+	// Get the handle of the window and configure its properties
+	HWND hwnd = _window.getSystemHandle();
+	SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+	// WS_EX_TOOLWINDOW
+
+	// Set window to transparent and boardless
+	if (!Debug_Mode)
+	{
+		MARGINS margins;
+		margins.cxLeftWidth = -1;
+		SetWindowLong(hwnd, GWL_STYLE, WS_POPUP | WS_VISIBLE);
+		DwmExtendFrameIntoClientArea(hwnd, &margins);
+	}
 
 	return OK;
 }
 
+// Initializing all the entities and other stuff
+FuncStat ct::Window::EntityInit(void)
+{
+	static ct::Button ButtonDebug(ICON_VISUAL_STUDIO, sf::Vector2f(0.2, 0.2));
+	ButtonDebug.SetPostion(sf::Vector2f(MAIN_WINDOW_WIDTH / 2, MAIN_WINDOW_HEIGHT / 2));
+	buttonList.insert(pair<sf::String, ct::Button *>("VS", &ButtonDebug));
+
+	return OK;
+}
 
 // To handle all the events
-FuncStat Window::HandleEvent(sf::RenderWindow &_window)
+FuncStat ct::Window::HandleEvent(sf::RenderWindow & _window)
 {
 	// Used for grabbing and repostioning a transparent window
 	static sf::Vector2i grabOffset;
@@ -123,71 +135,34 @@ FuncStat Window::HandleEvent(sf::RenderWindow &_window)
 					_window.setPosition(sf::Mouse::getPosition() + grabOffset);
 			}
 		}
-
-		// Handle the character change
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::LAlt))
-		{
-			if (event.type == sf::Event::MouseButtonPressed)
-			{
-				if (event.mouseButton.button == sf::Mouse::Right)
-				{
-					if (mainCharacter == "HammanG")
-					{
-						mainCharacter = "HammanD";
-					}
-					else 
-					{
-						mainCharacter = "HammanG";
-					}			
-				}
-			}
-		}
-
-		// Handle the menu
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::LAlt))
-		{
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::M))
-			{
-				buttonFlag = !buttonFlag;
-			}
-		}
 	}
 	return OK;
 }
+
 // Updating all the entities
 /// Implementing anmimations, etc.
-FuncStat Window::Update(void)
+FuncStat ct::Window::Update(void)
 {
-	characterList[mainCharacter]->FloatAnimation(2);
-	buttonList["VisualStudioLink"]->FloatAnimation();
+
 	return OK;
 }
 
 // Clear the window
-FuncStat Window::Clear(sf::RenderWindow &_window)
+FuncStat ct::Window::Clear(sf::RenderWindow & _window)
 {
 	_window.clear(sf::Color::Transparent);
 	return OK;
 }
 
 // Render all the stuf on the screen
-FuncStat Window::Draw(sf::RenderWindow &_window)
+FuncStat ct::Window::Draw(sf::RenderWindow & _window)
 {
-	_window.draw(characterList[mainCharacter]->GetSprite());
-	if (dialogueFlag)
-	{
-		_window.draw(entityList["Dialogue"]->GetSprite());
-		_window.draw(textList["MainDialogue"]->GetText());
-	}
-	if (buttonFlag)
-	{
-		_window.draw(buttonList["VisualStudioLink"]->GetSprite());
-	}
+	// _window.draw(buttonList["VS"]->GetSprite());
 	return OK;
 }
 
-	// Rereash the screen with the buff we updated and drawn
-FuncStat Window::Display(sf::RenderWindow & _window)
+// Rereash the screen with the buff we updated and drawn
+FuncStat ct::Window::Display(sf::RenderWindow &  _window)
 {
 	_window.display();
 	return OK;

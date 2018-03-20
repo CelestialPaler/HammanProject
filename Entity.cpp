@@ -1,19 +1,22 @@
 ﻿/***************************************************************************************************/
 /*                                                        Hamman re-edition                                                          */
-/*                                                              Entity Class	                                                               */
+/*																	Entity 	                                                                  */
 /*                                                            天师苍邪科技                                                                */
+/*                                                   www.tianshicangxie.com                                                        */
 /*                                      Copyright © 2015-2018 Celestial Tech Inc.                                          */
 /***************************************************************************************************/
+// Header files
 #include "Entity.h"
+
 /***************************************************************************************************/
 // Entity class
 /// Store all data of a entity and control the behavior of a entity
 
 // Constructors
-Entity::Entity(const string & _resPath, const sf::Vector2f & _scale)
+ct::Entity::Entity(const sf::String & _resPath, const sf::Vector2f & _scale)
 {
 	if (!this->texture.loadFromFile(_resPath))
-		std::cerr << "ERROR : Resource not found!" << _resPath << std::endl;
+		std::cerr << "ERROR : Resource not found!" << std::endl;
 	else
 	{
 		this->sprite.setTexture(this->texture);
@@ -23,7 +26,7 @@ Entity::Entity(const string & _resPath, const sf::Vector2f & _scale)
 }
 
 // Setting the postion of the entity
-FuncStat Entity::SetPostion(const sf::Vector2f _pos)
+FuncStat ct::Entity::SetPostion(const sf::Vector2f & _pos)
 {
 	this->sprite.setPosition(_pos);
 	return OK;
@@ -35,14 +38,14 @@ FuncStat Entity::SetPostion(const sf::Vector2f _pos)
 /// Control the behavior of the main character rendered in the main window
 
 // To implement the floating animation of the main chatacter
-FuncStat Character::FloatAnimation(const unsigned int & _mode)
+FuncStat ct::Character::FloatAnimation(const AnimationMode & _mode)
 {
 	switch (_mode)
 	{
-	case 1:
+	case Mode1:
 		FloatMode1();
 		break;
-	case 2:
+	case Mode2:
 		FloatMode2();
 		break;
 	default:
@@ -53,7 +56,7 @@ FuncStat Character::FloatAnimation(const unsigned int & _mode)
 }
 
 // Float Mode 1 : Using Acceleration and Velocity to contral the animation
-FuncStat Character::FloatMode1(void)
+FuncStat ct::Character::FloatMode1(void)
 {
 	static int floatPauseCounter = 0;
 	static int floatPauseIndex = 3;
@@ -88,7 +91,7 @@ FuncStat Character::FloatMode1(void)
 }
 
 // Float Mode 2 : Frame-perfect!
-FuncStat Character::FloatMode2(void)
+FuncStat ct::Character::FloatMode2(void)
 {
 	static unsigned int count = 0;
 	static unsigned int frameSkip[] = { 5,5,5,4,4,3,3,2,2,2,2,2,2,3,3,4,4,5,5,5 };
@@ -128,9 +131,9 @@ FuncStat Character::FloatMode2(void)
 /***************************************************************************************************/
 // Class : Button
 /// Subclass of the Entity
-/// 
+/// Clickablie button used for menu and other controling stuff
 
-FuncStat Button::FloatAnimation(void)
+FuncStat ct::Button::FloatAnimation(void)
 {
 	static unsigned int count = 0;
 	static unsigned int frameSkip[] = { 3,3,2,2,2,1,1,2,2,2,3,3 };
@@ -166,3 +169,4 @@ FuncStat Button::FloatAnimation(void)
 	count++;
 	return OK;
 }
+

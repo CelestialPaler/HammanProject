@@ -1,23 +1,32 @@
 ﻿/***************************************************************************************************/
 /*                                                      Hamman re-edition                                                            */
-/*                                                                 Main                                                                       */
+/*                                                                 Utility                                                                       */
 /*                                                           天师苍邪科技                                                                 */
 /*                                                   www.tianshicangxie.com                                                        */
 /*                                      Copyright © 2015-2018 Celestial Tech Inc.                                           */
 /***************************************************************************************************/
+#pragma once
+// Header files
 #include "Defination.h"
-#include "Window.h"
-#include "Entity.h"
-#include "Link.h"
 
-int main()
+/***************************************************************************************************/
+// NameSpace : Celestial Tech
+namespace ct
 {
-	ct::Window mainWindow;
-	sf::Thread mainLoop(&ct::Window::Run, &mainWindow);
-	mainLoop.launch();
+	/***************************************************************************************************/
+	// Class : Shortcut
+	/// Subclass of the Entity
+	/// Shortcut to run other programs
+	class Shortcut
+	{
+	public:
+		Shortcut() = default;
+		Shortcut(const sf::String & _name, const sf::String & _lnkPath);
+	public:
+		FuncStat Open(void);
 
-	sf::Thread eventHandle(&ct::Window::HandleEvent, &mainWindow);
-	eventHandle.launch();
-
-	return 0;
+	private:
+		sf::String shortcutName;
+		sf::String shortcutPath;
+	};
 }

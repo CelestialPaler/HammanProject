@@ -1,15 +1,13 @@
 ﻿/***************************************************************************************************/
-/*                                                        Hamman re-edition                                                          */
-/*																 Defination                                                                  */
-/*                                                            天师苍邪科技                                                                */
-/*                                      Copyright © 2015-2018 Celestial Tech Inc.                                          */
+/*                                                      Hamman re-edition                                                            */
+/*                                                              Defination                                                                  */
+/*                                                           天师苍邪科技                                                                 */
+/*                                                   www.tianshicangxie.com                                                        */
+/*                                      Copyright © 2015-2018 Celestial Tech Inc.                                           */
 /***************************************************************************************************/
 #pragma once
 /***************************************************************************************************/
 // System HeaderFiles
-#include <SFML\Graphics.hpp>
-#include <SFML\Audio.hpp>
-#include <SFML\System.hpp>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -19,6 +17,12 @@
 #include <shlobj.h>
 #include <shellapi.h>
 /***************************************************************************************************/
+// SFML HeaderFiles
+#include <SFML\Graphics.hpp>
+#include <SFML\Audio.hpp>
+#include <SFML\System.hpp>
+
+/***************************************************************************************************/
 // Pragma
 #pragma comment (lib, "Dwmapi.lib")
 /***************************************************************************************************/
@@ -26,7 +30,7 @@
 using namespace std;
 /***************************************************************************************************/
 // Debug mode
-const bool Debug_Mode = false;
+const bool Debug_Mode = true;
 /***************************************************************************************************/
 // Window size
 #define MAIN_WINDOW_WIDTH 400
