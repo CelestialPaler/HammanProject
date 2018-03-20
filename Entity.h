@@ -1,16 +1,20 @@
 ﻿/***************************************************************************************************/
 /*                                                        Hamman re-edition                                                          */
-/*                                                              Entity Class	                                                               */
+/*																	Entity 	                                                                  */
 /*                                                            天师苍邪科技                                                                */
 /*                                      Copyright © 2015-2018 Celestial Tech Inc.                                          */
 /***************************************************************************************************/
 #pragma once
 // Header files
 #include "Defination.h"
+#include "Entity.h"
+#include "Text.h"
+#include "Menu.h"
+#include "Utils.h"
 
 /***************************************************************************************************/
 // Class : Entity
-/// Store all data of a entity and control the behavior of a entity
+/// The parent class of all kinds of various stuffs in the window, especially which has textures and sprites.
 class Entity
 {   
 public:
@@ -24,7 +28,7 @@ public:
 	inline sf::Texture & GetTexture(void) { return this->texture; }
 	// To get the reference of the sf::sprite
 	inline sf::Sprite & GetSprite(void) { return this->sprite; }
-private:
+protected:
 	sf::Texture texture;
 	sf::Sprite sprite;
 };
@@ -36,9 +40,9 @@ private:
 class Character : public Entity
 {
 public:
-	// Constucters
+	// Constuctors
 	Character() = default;
-	Character(const string & _resPath, sf::Vector2f  & _scale) : Entity(_resPath, _scale) {};
+	Character(const string & _resPath, sf::Vector2f  & _scale) : Entity(_resPath, _scale) {}
 public:
 	// To implement the floating animation of the main chatacter
 	FuncStat FloatAnimation(const unsigned int & _mode);
@@ -53,4 +57,22 @@ private:
 	int floatVelocity = FLOAT_VELOCITY_MAX;
 	// Floating Direction Flag
 	bool floatDirFlag = true;
+};
+
+/***************************************************************************************************/
+// Class : Button
+/// Subclass of the Entity
+/// 
+class Button : public Entity
+{
+public:
+	Button() = default;
+	Button(const string & _resPath, sf::Vector2f  & _scale) : Entity(_resPath, _scale) {}
+public:
+	// To implement the floating animation of the button
+	FuncStat FloatAnimation(void);
+private:
+	// Floating Direction Flag
+	bool floatDirFlag = true;
+	bool isClicked = false;
 };

@@ -18,9 +18,11 @@ public:
 	Text(void) = default;
 	Text(const string & _resPath, const string & _text, const unsigned & _size);
 public:
-	// Setting string to show on screen 
+	// Set the content of text
 	FuncStat SetText(const string & _text);
+	// Set the color of text
 	FuncStat SetColor(const sf::Color & _color);
+	// Set the postion of text
 	FuncStat SetPosition(const sf::Vector2f & _vec);
 public:
 	inline sf::Text & GetText(void) { return this->text; }

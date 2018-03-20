@@ -10,17 +10,17 @@
 /// Main rendering logic 
 /// Store all the entities and other stuff , i.e. sound effect, text, etc.
 
-// Constructer
+// Constructor
 Window::Window()
 {
 	// Create a new window 
 	sf::RenderWindow window(sf::VideoMode(MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT), title);
 	// Set framerate limit
 	window.setFramerateLimit(60);
-
 	// Get the handle of the window and set it top-most
 	HWND hwnd = window.getSystemHandle();
-	SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+	SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, 
+		WS_EX_TOOLWINDOW | SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 
 	// Set window to transparent
 	if (!Debug_Mode)
@@ -52,20 +52,37 @@ Window::Window()
 // Initializing all the entities and other stuff
 FuncStat Window::EntityInit(void)
 {
-	static Character hamman(HAMMAN_G_FULL, sf::Vector2f(0.5, 0.5));
-	hamman.SetPostion(sf::Vector2f(MAIN_WINDOW_WIDTH / 2, MAIN_WINDOW_HEIGHT / 2));
-	mainCharacter = &hamman;
+	// Character Loading
+	/// Hamman G
+	static Character hammanG(HAMMAN_G_FULL, sf::Vector2f(0.5, 0.5));
+	hammanG.SetPostion(sf::Vector2f(MAIN_WINDOW_WIDTH / 2, MAIN_WINDOW_HEIGHT / 2));
+	characterList.insert(pair<string, Character *>("HammanG", &hammanG));
+	/// Hamman D
+	static Character hammanD(HAMMAN_D_FULL, sf::Vector2f(0.5, 0.5));
+	hammanD.SetPostion(sf::Vector2f(MAIN_WINDOW_WIDTH / 2, MAIN_WINDOW_HEIGHT / 2));
+	characterList.insert(pair<string, Character *>("HammanD", &hammanD));
 
-	static Entity dialogueWindow(DIALOGUE_FULL, sf::Vector2f(0.33, 0.25));
+	// Entity Loading
+	/// DialogueWindow
+	static Entity dialogueWindow(DIALOGUE_BOX_FULL, sf::Vector2f(0.33, 0.25));
 	dialogueWindow.SetPostion(sf::Vector2f(MAIN_WINDOW_WIDTH / 2, MAIN_WINDOW_HEIGHT / 2 + 100));
 	dialogueWindow.GetSprite().setColor(sf::Color(255, 255, 255, 255 * 0.8));
 	entityList.insert(pair<string, Entity *>("Dialogue", &dialogueWindow));
 
+	// Button Loading
+	/// Visual Studio
+	static Button visualStudioLink(ICON_VISUAL_STUDIO, sf::Vector2f(0.2, 0.2));
+	visualStudioLink.SetPostion(sf::Vector2f(MAIN_WINDOW_WIDTH / 6, MAIN_WINDOW_HEIGHT / 6));
+	buttonList.insert(pair<string, Button *>("VisualStudioLink", &visualStudioLink));
+
+	// Text Loading
+	/// Dialogue No.1
 	static Text dialogueText(FONT_CH_FANG, "Hentai!", 30);
 	dialogueText.GetText().setString(L"            变态!\n为什么一直盯着哈曼看!");
 	dialogueText.SetColor(sf::Color(50, 50, 50));
 	dialogueText.SetPosition(sf::Vector2f(MAIN_WINDOW_WIDTH / 2 - 100, MAIN_WINDOW_HEIGHT / 2 + 70));
 	textList.insert(pair<string, Text *>("MainDialogue", &dialogueText));
+
 	return OK;
 }
 
@@ -107,15 +124,31 @@ FuncStat Window::HandleEvent(sf::RenderWindow &_window)
 			}
 		}
 
-		// Handle the menu
+		// Handle the character change
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::LAlt))
 		{
 			if (event.type == sf::Event::MouseButtonPressed)
 			{
 				if (event.mouseButton.button == sf::Mouse::Right)
 				{
-					dialogueFlag = !dialogueFlag;
+					if (mainCharacter == "HammanG")
+					{
+						mainCharacter = "HammanD";
+					}
+					else 
+					{
+						mainCharacter = "HammanG";
+					}			
 				}
+			}
+		}
+
+		// Handle the menu
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::LAlt))
+		{
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::M))
+			{
+				buttonFlag = !buttonFlag;
 			}
 		}
 	}
@@ -125,7 +158,8 @@ FuncStat Window::HandleEvent(sf::RenderWindow &_window)
 /// Implementing anmimations, etc.
 FuncStat Window::Update(void)
 {
-	mainCharacter->FloatAnimation(2);
+	characterList[mainCharacter]->FloatAnimation(2);
+	buttonList["VisualStudioLink"]->FloatAnimation();
 	return OK;
 }
 
@@ -139,11 +173,15 @@ FuncStat Window::Clear(sf::RenderWindow &_window)
 // Render all the stuf on the screen
 FuncStat Window::Draw(sf::RenderWindow &_window)
 {
-	_window.draw(mainCharacter->GetSprite());
+	_window.draw(characterList[mainCharacter]->GetSprite());
 	if (dialogueFlag)
 	{
 		_window.draw(entityList["Dialogue"]->GetSprite());
 		_window.draw(textList["MainDialogue"]->GetText());
+	}
+	if (buttonFlag)
+	{
+		_window.draw(buttonList["VisualStudioLink"]->GetSprite());
 	}
 	return OK;
 }

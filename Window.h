@@ -6,9 +6,11 @@
 /***************************************************************************************************/
 #pragma once
 // Header files
-#include "defination.h"
+#include "Defination.h"
 #include "Entity.h"
 #include "Text.h"
+#include "Menu.h"
+#include "Utils.h"
 
 /***************************************************************************************************/
 // Class : Window
@@ -17,7 +19,7 @@
 class Window
 {
 public:
-	// Constructer
+	// Constructor
 	Window();
 
 private:
@@ -42,10 +44,17 @@ private:
 	string title = "Hamman forever!";
 	// Store all the entities 
 	map<string, Entity *> entityList;
+	// Store the main character
+	map<string, Character *> characterList;
 	// Store all the texts
 	map<string, Text *> textList;
-	// Store the main character
-	Character * mainCharacter;
+	// Store all the shortcuts
+	map<string, Button *> buttonList;
+	// Menu manager
+	Menu mainMenu;
+	// Choose which is the main character
+	string mainCharacter = "HammanG";
 	// Flag of showing the dialogue box or not
 	bool dialogueFlag = false;
+	bool buttonFlag = false;
 };

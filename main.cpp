@@ -9,9 +9,13 @@
 #include "Entity.h"
 #include "Window.h"
 
+#include <shlobj.h>
+#include <windows.h>
+#include <shellapi.h>
 
 int main()
 {
 	Window mainWindow;
+
 	return 0;
 }

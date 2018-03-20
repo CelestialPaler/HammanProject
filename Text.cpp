@@ -5,7 +5,11 @@
 /*                                      Copyright © 2015-2018 Celestial Tech Inc.                                          */
 /***************************************************************************************************/
 #include "Text.h"
+/***************************************************************************************************/
+// Class : text
+/// Store all texts
 
+// Constructor
 Text::Text(const string & _resPath, const string & _text, const unsigned & _size)
 {
 	if (!this->font.loadFromFile(_resPath))
@@ -19,18 +23,21 @@ Text::Text(const string & _resPath, const string & _text, const unsigned & _size
 	}
 }
 
+// Set the content of text
 FuncStat Text::SetText(const string & _text)
 {
 	this->text.setString(_text);
 	return OK ;
 }
 
+// Set the color of text
 FuncStat Text::SetColor(const sf::Color & _color)
 {
 	this->text.setColor(_color);
 	return OK;
 }
 
+// Set the postion of text
 FuncStat Text::SetPosition(const sf::Vector2f & _vec)
 {
 	this->text.setPosition(_vec);

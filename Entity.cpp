@@ -80,7 +80,7 @@ FuncStat Character::FloatMode1(void)
 				floatVelocity += floatAccr;
 		}
 		floatPauseCounter = 0;
-		this->GetSprite().move(sf::Vector2f(0, floatVelocity));
+		this->sprite.move(sf::Vector2f(0, floatVelocity));
 	}
 	else
 		floatPauseCounter++;
@@ -97,7 +97,7 @@ FuncStat Character::FloatMode2(void)
 	{
 		if (count == frameSkip[frameSkipIndex])
 		{
-			this->GetSprite().move(sf::Vector2f(0, 1));
+			this->sprite.move(sf::Vector2f(0, 1));
 			count = 0;
 			if (frameSkipIndex == 19)
 			{
@@ -111,9 +111,51 @@ FuncStat Character::FloatMode2(void)
 	{
 		if (count == frameSkip[frameSkipIndex])
 		{
-			this->GetSprite().move(sf::Vector2f(0, -1));
+			this->sprite.move(sf::Vector2f(0, -1));
 			count = 0;
 			if (frameSkipIndex == 19)
+			{
+				frameSkipIndex = 0;
+				floatDirFlag = true;
+			}
+			frameSkipIndex++;
+		}
+	}
+	count++;
+	return OK;
+}
+
+/***************************************************************************************************/
+// Class : Button
+/// Subclass of the Entity
+/// 
+
+FuncStat Button::FloatAnimation(void)
+{
+	static unsigned int count = 0;
+	static unsigned int frameSkip[] = { 3,3,2,2,2,1,1,2,2,2,3,3 };
+	static size_t frameSkipIndex = 0;
+	if (floatDirFlag) // Up
+	{
+		if (count == frameSkip[frameSkipIndex])
+		{
+			this->sprite.move(sf::Vector2f(0, 1));
+			count = 0;
+			if (frameSkipIndex == 11)
+			{
+				frameSkipIndex = 0;
+				floatDirFlag = false;
+			}
+			frameSkipIndex++;
+		}
+	}
+	else // Down
+	{
+		if (count == frameSkip[frameSkipIndex])
+		{
+			this->sprite.move(sf::Vector2f(0, -1));
+			count = 0;
+			if (frameSkipIndex == 11)
 			{
 				frameSkipIndex = 0;
 				floatDirFlag = true;
