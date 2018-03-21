@@ -27,32 +27,35 @@ namespace ct
 	public:
 		// Initializing the window and start the main loop
 		void Run(void);
-		// Hook of the events
-		void EventHook(void);
 
 	private:
 		// Initializing the renderwindow
 		FuncStat WindowInit(sf::RenderWindow & _window);
 		// Initializing all the entities and other stuff
 		FuncStat EntityInit(void);
+
+	private:
 		// To handle all the events
 		FuncStat HandleEvent(sf::RenderWindow & _window);
 		// Updating all the entities
 		/// Implementing anmimations, etc.
-		FuncStat Update(void);
-
-	private:
+		FuncStat Update(sf::RenderWindow & _window);
 		// Clear the window
 		FuncStat Clear(sf::RenderWindow & _window);
 		// Render all the stuf on the screen
 		FuncStat Draw(sf::RenderWindow & _window);
 		// Rereash the screen with the buff we updated and drawn
 		FuncStat Display(sf::RenderWindow & _window);
-
+		// Update the custom shape of the main window
+		FuncStat RegionUpdate(sf::RenderWindow & _window);
 	private:
 		// The title of the main window
 		string title = "Hamman Forever!";
 		// Store all the ct::Button in the main window
 		map<sf::String, ct::Button *> buttonList;
+		// Store all the ct::Charater in the main window
+		map<sf::String, ct::Character *> characterList;
+		// Region update flag
+		bool regionUpdateFlag = false;
 	};
 }

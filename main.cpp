@@ -16,8 +16,5 @@ int main()
 	sf::Thread mainLoop(&ct::Window::Run, &mainWindow);
 	mainLoop.launch();
 
-	sf::Thread eventHandle(&ct::Window::HandleEvent, &mainWindow);
-	eventHandle.launch();
-
 	return 0;
 }
